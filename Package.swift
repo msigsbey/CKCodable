@@ -37,7 +37,8 @@ let package = Package(
                 "CKCodable"
             ],
             resources: [
-                .copy("Resources/Tester.ckrecord")
+                .copy("Resources/Tester.ckrecord"),
+                .copy("Resources/apple-logo.png")
             ]
         ),
     ]

@@ -9,9 +9,12 @@ import CloudKit
 
 @testable import CKCodable
 
+/// A test object with basic types and a custom identifier and zone for record generation.
 struct TestCustomIdentifierAndZone: CKCodable, Equatable {
     var systemFields: Data?
+    /// A `String` name.
     let name: String
+    /// A `Date` for creation time.
     let createdAt: Date
 
     var newRecordProvider: CKRecordProvider {
@@ -20,7 +23,10 @@ struct TestCustomIdentifierAndZone: CKCodable, Equatable {
                 recordType: String(describing: Self.self),
                 recordID: CKRecord.ID(
                     recordName: "TEST-ID",
-                    zoneID: CKRecordZone.ID(zoneName: "Zone12345", ownerName: CKCurrentUserDefaultName)
+                    zoneID: CKRecordZone.ID(
+                        zoneName: "Zone12345",
+                        ownerName: CKCurrentUserDefaultName
+                    )
                 )
             )
         }

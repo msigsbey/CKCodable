@@ -13,8 +13,7 @@ import XCTest
 final class CKRecrdEndcoderTests: XCTestCase {
     func testComplexPersonStructEncoding() throws {
         let record = try CKRecordEncoder().encode(Test.Tester)
-        try _validateFields(
-            in: record,
+        try record.validateFields(
             type: String(describing:Test.self),
             zone: .default
         )
@@ -23,8 +22,7 @@ final class CKRecrdEndcoderTests: XCTestCase {
     func testCustomZoneIDEncoding() throws {
         let zoneID = CKRecordZone.ID(zoneName: "ABCDE", ownerName: CKCurrentUserDefaultName)
         let record = try CKRecordEncoder().encode(TestCustomZone.Tester)
-        try _validateFields(
-            in: record,
+        try record.validateFields(
             type: String(describing:TestCustomZone.self),
             zone: zoneID
         )
@@ -37,8 +35,7 @@ final class CKRecrdEndcoderTests: XCTestCase {
 
         let record = try CKRecordEncoder().encode(previouslySavedTester)
 
-        try _validateFields(
-            in: record,
+        try record.validateFields(
             type: "TypeABCD",
             name: "RecordABCD",
             zone: CKRecordZone.ID(zoneName: "ZoneABCD", ownerName: "OwnerABCD")
@@ -48,8 +45,7 @@ final class CKRecrdEndcoderTests: XCTestCase {
     func testCustomRecordIdentifierEncoding() throws {
         let record = try CKRecordEncoder().encode(TestCustomIdentifierAndZone.Tester)
 
-        try _validateFields(
-            in: record,
+        try record.validateFields(
             name: "TEST-ID",
             zone: CKRecordZone.ID(zoneName: "Zone12345", ownerName: CKCurrentUserDefaultName)
         )

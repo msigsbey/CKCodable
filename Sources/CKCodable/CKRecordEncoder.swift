@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  CKRecordEncoder.swift
 //  
 //
 //  Created by Michael Sigsbey on 11/11/22.
@@ -37,9 +37,10 @@ public enum CKRecordEncodingError: Error {
     }
 }
 
-/// A specialized Encoder type for CKRecord.  In order to utilize this encoder, conform to ``CKCodable``.
+/// A specialized Encoder type for `CKRecord`.  In order to utilize this encoder, conform to ``CKCodable``.
 public class CKRecordEncoder {
 
+    /// Standard nitializer.
     public init() {}
 
     /// Encodes any `CKEncodable` into a valid `CKRecord`.
@@ -127,7 +128,8 @@ extension _CKRecordEncoder.KeyedContainer: KeyedEncodingContainerProtocol {
     }
 
     func encode<T>(
-        _ value: T, forKey key: Key
+        _ value: T,
+        forKey key: Key
     ) throws where T : Encodable {
         guard key.stringValue != _CKSystemFieldsKeyName else {
             guard let systemFields = value as? Data else {
@@ -143,7 +145,8 @@ extension _CKRecordEncoder.KeyedContainer: KeyedEncodingContainerProtocol {
     }
 
     private func produceCloudKitValue<T>(
-        for value: T, withKey key: Key
+        for value: T,
+        withKey key: Key
     ) throws -> CKRecordValue where T : Encodable {
         if let urlValue = value as? URL {
             return produceRecordValue(for: urlValue)
@@ -180,7 +183,8 @@ extension _CKRecordEncoder.KeyedContainer: KeyedEncodingContainerProtocol {
     }
 
     func nestedContainer<NestedKey>(
-        keyedBy keyType: NestedKey.Type, forKey key: Key
+        keyedBy keyType: NestedKey.Type,
+        forKey key: Key
     ) -> KeyedEncodingContainer<NestedKey> where NestedKey : CodingKey {
         fatalError(CKRecordEncodingError.unsupportedFunctionality.localizedDescription)
     }
