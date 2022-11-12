@@ -26,7 +26,7 @@ public protocol CKRecordRepresentable {
 
 /// A new record provider that creates a CKRecord with defautl values.
 extension CKRecordRepresentable {
-    var newRecordProvider: CKRecordProvider {
+    public var newRecordProvider: CKRecordProvider {
         {
             CKRecord(
                 recordType: String(describing: Self.self),

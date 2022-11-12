@@ -23,18 +23,6 @@ struct Test: CKCodable, Equatable {
     /// A file `URL`.
     let file: URL
 
-    var newRecordProvider: CKRecordProvider {
-        {
-            CKRecord(
-                recordType: String(describing: Self.self),
-                recordID: CKRecord.ID(
-                    recordName: UUID().uuidString,
-                    zoneID: .default
-                )
-            )
-        }
-    }
-
     /// Custom override for equality to exclude the system data.  This allows quick comparison of data prior to and after encoding.
     static func ==(lhs: Test, rhs: Test) -> Bool {
         return lhs.name == rhs.name &&
