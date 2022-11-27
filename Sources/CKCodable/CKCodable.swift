@@ -22,20 +22,28 @@ public protocol CKRecordRepresentable {
 
     ///  A ``CKRecordProvider`` for creating new records of a given type allowing each type to specify the default `CKRecord` creation behavior.
     var newRecordProvider: CKRecordProvider { get }
+
+    /// The `CKRecordZone.ID` for instances of this type.
+    static var zoneId: CKRecordZone.ID { get }
 }
 
-/// A new record provider that creates a CKRecord with defautl values.
 extension CKRecordRepresentable {
+    /// A new record provider that creates a CKRecord with defautl values.
     public var newRecordProvider: CKRecordProvider {
         {
             CKRecord(
                 recordType: String(describing: Self.self),
                 recordID: CKRecord.ID(
                     recordName: UUID().uuidString,
-                    zoneID: .default
+                    zoneID: Self.zoneId
                 )
             )
         }
+    }
+
+    /// The default `CKRecordZone.ID`.
+    public static var zoneId: CKRecordZone.ID {
+        .default
     }
 }
 
