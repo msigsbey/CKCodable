@@ -28,9 +28,15 @@ extension CKRecord {
     /// Loads the test `CKRecord` which has been encoded and archived to file
     static var testRecord: CKRecord {
         get throws {
-            guard let url = Bundle.module.url(forResource: "Tester", withExtension: "ckrecord") else {
+            #if os(macOS)
+            guard let url = Bundle.module.url(forResource: "Tester-macOS", withExtension: "ckrecord") else {
                 fatalError("Required test asset Tester.ckrecord not found")
             }
+            #elseif os(iOS)
+            guard let url = Bundle.module.url(forResource: "Tester-iOS", withExtension: "ckrecord") else {
+                fatalError("Required test asset Tester.ckrecord not found")
+            }
+            #endif
 
             let data = try Data(contentsOf: url)
             let record = try NSKeyedUnarchiver.unarchivedObject(ofClass: CKRecord.self, from: data)
@@ -65,31 +71,33 @@ extension CKRecord {
         XCTAssertNil(self[_CKSystemFieldsKeyName], "\(_CKSystemFieldsKeyName) should NOT be encoded to the record directly")
     }
 
-    /// Switch to macOS target to generate the Tester.ckrecord file.
-    #if os(macOS)
-    static func generateTestRecord() throws -> Bool {
+
+    static func generateTestRecord(at filePath: String) throws -> Bool {
         let recordData = try CKRecordEncoder().encode(Test.Tester)
         let data = try NSKeyedArchiver.archivedData(withRootObject: recordData, requiringSecureCoding: false)
 
         return FileManager.default.createFile(
-            atPath: testFilePath,
+            atPath: filePath,
             contents: data,
             attributes: nil
         )
     }
 
+    #if os(macOS)
     static var testFilePath: String {
-        return "/tmp/Tester.ckrecord"
+        return "/tmp/Tester-macOS.ckrecord"
+    }
+    #elseif os(iOS)
+    static var testFilePath: String {
+        return "/tmp/Tester-iOS.ckrecord"
     }
     #endif
 }
 
-#if os(macOS)
 final class GenerateTestRecordTests: XCTestCase {
     func testGenerateTestRecord() throws {
-        XCTAssertTrue(try CKRecord.generateTestRecord())
+        XCTAssertTrue(try CKRecord.generateTestRecord(at: CKRecord.testFilePath))
         FileManager.default.fileExists(atPath: CKRecord.testFilePath)
         print("Generated record at: \(CKRecord.testFilePath)")
     }
 }
-#endif

@@ -6,6 +6,7 @@
 //
 
 import CloudKit
+import Foundation
 
 @testable import CKCodable
 
@@ -26,7 +27,10 @@ struct Test: CKCodable, Equatable {
     /// Custom override for equality to exclude the system data.  This allows quick comparison of data prior to and after encoding.
     static func ==(lhs: Test, rhs: Test) -> Bool {
         return lhs.name == rhs.name &&
-        lhs.createdAt == rhs.createdAt
+        lhs.createdAt == rhs.createdAt &&
+        lhs.flag == rhs.flag &&
+        lhs.link == rhs.link &&
+        lhs.file == rhs.file
     }
 }
 
@@ -38,7 +42,7 @@ extension Test {
         name: "Tester Testerson",
         createdAt: Date.init(timeIntervalSince1970: 0),
         link: URL(string: "http://www.apple.com")!,
-        file: Bundle.module.url(forResource: "apple-logo", withExtension: "png")!
+        file: URL(fileURLWithPath: "../Resources/apple-logo.png")
     )
 }
 
