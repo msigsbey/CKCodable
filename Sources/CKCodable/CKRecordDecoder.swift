@@ -171,6 +171,13 @@ extension _CKRecordDecoder.KeyedContainer: KeyedDecodingContainerProtocol {
         }
     }
 
+    func decodeIfPresent<T>(
+        _ type: T.Type,
+        forKey key: Key
+    ) throws -> T? where T : Decodable {
+        return try? decode(type, forKey: key)
+    }
+
     func decode<T>(
         _ type: T.Type,
         forKey key: Key
