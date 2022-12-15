@@ -129,13 +129,21 @@ extension _CKRecordDecoder {
         func checkCanDecodeValue(
             forKey key: Key
         ) throws {
-            guard self.contains(key) else {
+            guard self.contains(key) ||
+                  checkKeyForKeyPath(key)
+            else {
                 let context = DecodingError.Context(
                     codingPath: self.codingPath,
                     debugDescription: "key not found: \(key)"
                 )
                 throw DecodingError.keyNotFound(key, context)
             }
+        }
+
+        func checkKeyForKeyPath(
+            _ key: Key
+        ) -> Bool {
+            key.stringValue.contains(".")
         }
 
         func nestedCodingPath(
@@ -175,7 +183,14 @@ extension _CKRecordDecoder.KeyedContainer: KeyedDecodingContainerProtocol {
         _ type: T.Type,
         forKey key: Key
     ) throws -> T? where T : Decodable {
-        return try? decode(type, forKey: key)
+        try? decode(type, forKey: key)
+    }
+
+    func decodeIfPresent(
+        _ type: String.Type,
+        forKey key: Key
+    ) throws -> String? {
+        try? decode(type, forKey: key)
     }
 
     func decode<T>(
@@ -191,6 +206,19 @@ extension _CKRecordDecoder.KeyedContainer: KeyedDecodingContainerProtocol {
         // Decode the systemFieldsData
         if key.stringValue == _CKSystemFieldsKeyName {
             return systemFieldsData as! T
+        }
+
+        // Key-paths come from the record
+        if checkKeyForKeyPath(key) {
+            guard let value = record.value(forKeyPath: key.stringValue) as? T else {
+                let context = DecodingError.Context(
+                    codingPath: codingPath,
+                    debugDescription: "CKRecordValue couldn't be converted to \(String(describing: type))'"
+                )
+                throw DecodingError.typeMismatch(type, context)
+            }
+
+            return value
         }
 
         // Bools are encoded as Int64 in CloudKit
@@ -212,6 +240,10 @@ extension _CKRecordDecoder.KeyedContainer: KeyedDecodingContainerProtocol {
         }
 
         return value
+    }
+
+    func pathComponents(forKey key: Key) -> [String]  {
+        key.stringValue.components(separatedBy: ".")
     }
 
     private func decodeURL(
